@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     dbHandler.addItems(mailService.GetDocument(), carrera);
                 }
             } catch (Exception e) {
-                Toast errorToast = Toast.makeText(getApplicationContext(), "Error!, no tiene conexión a internet, el horario mostrado puede no ser el mas actualizado, le sugerimos conectarse a internet", Toast.LENGTH_LONG);
+                Toast errorToast = Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_no_internet), Toast.LENGTH_LONG);
                 errorToast.show();
             }
             return null;
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         }
         if (requestCode == 2) {
             if(resultCode == Activity.RESULT_CANCELED) {
-                Toast errorToast = Toast.makeText(getApplicationContext(), "Error!, no tiene conexión a internet, el horario mostrado puede no ser el mas actualizado, le sugerimos conectarse a internet", Toast.LENGTH_LONG);
+                Toast errorToast = Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_no_internet), Toast.LENGTH_LONG);
                 errorToast.show();
             }
         }

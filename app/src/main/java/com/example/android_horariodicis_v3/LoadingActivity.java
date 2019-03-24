@@ -45,7 +45,6 @@ public class LoadingActivity extends AppCompatActivity {
                     dbHandler.addItems(mailService.GetDocument(), carrera);
                 }
             } catch (Exception e) {
-
                 setResult(Activity.RESULT_CANCELED);
             }finally {
                 setResult(Activity.RESULT_OK);

@@ -176,15 +176,16 @@ class Nap
 
     static class Carrera {
         static String Check(String input) {
-            String[] carreras = new String[]{"Artes Digitales", "Comunicaciones y Electrónica", "Eléctrica",
+            String[] carreras = new String[]{"Artes Digitales", "Comunicaciones y Electrónica", "Eléctrica", "Enseñanza del Inglés",
                     "Gestión Empresarial", "Mecánica", "Mecatrónica", "Sistemas Computacionales"};
             if(input.equals(carreras[0])) return "ARTES";
             else if(input.equals(carreras[1])) return "ELECTRONICA";
             else if(input.equals(carreras[2])) return "ELECTRICA";
-            else if(input.equals(carreras[3])) return "GESTION";
-            else if(input.equals(carreras[4])) return "MECANICA";
-            else if(input.equals(carreras[5])) return "MECATRONICA";
-            else if(input.equals(carreras[6])) return "SISTEMAS";
+            else if(input.equals(carreras[3])) return "INGLES";
+            else if(input.equals(carreras[4])) return "GESTION";
+            else if(input.equals(carreras[5])) return "MECANICA";
+            else if(input.equals(carreras[6])) return "MECATRONICA";
+            else if(input.equals(carreras[7])) return "SISTEMAS";
             return input;
         }
     }
