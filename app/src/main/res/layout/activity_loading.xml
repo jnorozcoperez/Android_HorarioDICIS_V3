@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    android:padding="16dp"
+    tools:context=".LoadingActivity">
+
+    <ProgressBar
+        android:id="@+id/pbLoading"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
+
+    <TextView
+        android:id="@+id/tbxProcess"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="@id/pbLoading"
+        android:layout_centerHorizontal="true"
+        android:layout_alignBottom="@id/pbLoading"
+        android:text="@string/loading"
+        android:textColor="#FFF"
+        android:textSize="15sp" />
+
+</RelativeLayout>
