@@ -1,3 +1,31 @@
 <resources>
-    <string name="app_name">Android_HorarioDICIS_V3</string>
+    <string name="app_name">Horario de DICIS</string>
+    <string name="strHorario">HORARIO</string>
+    <string name="strPersonalizar">PERSONALIZAR</string>
+    <string name="imageEscudo">imgEscudo</string>
+    <string name="dropDowCarrera">dropDowCarrera</string>
+    <string name="carrera">¿Cuál es tu carrera?</string>
+    <string name="next">Siguiente</string>
+    <string name="APIkey">AIzaSyDOoiSTEDYLhTf7i2RnJy5DzeWTSqOFhUs</string>
+    <string name="horas_sem">Hrs/Sem</string>
+    <string name="unidad_de_aprendizaje">Unidad de Aprendizaje</string>
+    <string name="area_de_la_uda">Area de la UDA</string>
+    <string name="clave">Clave</string>
+    <string name="lun">Lun</string>
+    <string name="mar">Mar</string>
+    <string name="mie">Mie</string>
+    <string name="jue">Jue</string>
+    <string name="vie">Vie</string>
+    <string name="sab">Sab</string>
+    <string name="aula">Aula</string>
+    <string name="profesor">Profesor</string>
+    <string name="loading">Buscando el horario más actual…</string>
+    <string name="titleHorario">Horario de DICIS</string>
+    <string name="titlePersonalizar">Personalizar Horario</string>
+    <string name="anadircurso">Añadir curso</string>
+    <string name="add">Agregar</string>
+    <string name="Cancelar">Cancelar</string>
+    <string name="addtolist">Añadir a la Lista</string>
+    <string name="vacio">Vacío</string>
+    <string name="error_permissionWrite">La aplicación no tiene los permisos necesarios para guardar el PDF, verifique los permisos en Ajustes -> Aplicaciones</string>
 </resources>
