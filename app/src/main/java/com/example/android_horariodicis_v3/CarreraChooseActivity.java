@@ -21,7 +21,7 @@ public class CarreraChooseActivity extends AppCompatActivity {
         Objects.requireNonNull(this.getSupportActionBar()).hide();
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         dropdown = findViewById(R.id.ddCarrera);
-        String[] items = new String[]{"Artes Digitales", "Comunicaciones y Electrónica", "Eléctrica", "Enseñanza del Inglés", "Gestión Empresarial", "Mecánica", "Mecatrónica", "Sistemas Computacionales"};
+        String[] items = new String[]{"Artes Digitales", "Comunicaciones y Electrónica", "Eléctrica", "Gestión Empresarial", "Mecánica", "Mecatrónica", "Sistemas Computacionales"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
         dropdown.setAdapter(adapter);
         Button next = findViewById(R.id.btNext);

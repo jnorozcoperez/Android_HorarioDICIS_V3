@@ -1,9 +1,11 @@
 package com.example.android_horariodicis_v3;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -125,14 +127,12 @@ public class HorarioActivity extends AppCompatActivity {
                     if (!hasPermission(HorarioActivity.this, PERMISSIONS)) {
                         ActivityCompat.requestPermissions(HorarioActivity.this, PERMISSIONS, REQUEST_CREATEPDF);
                     }
-                    else if(Nap.PDF.Create.FromHTML(Nap.FileX.RenameIfExist(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + filePDFName + "_" + Nap.Carrera.Check(carrera) + ".pdf", 0), html)) {
-                        Nap.Notification.Show_ClickFile(getApplicationContext(), Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + filePDFName + "_" + Nap.Carrera.Check(carrera) + ".pdf", "HorarioDICIS", "Archivo descargado");
+                    else {
+                        new CreatePDF().execute();
                     }
                 }
                 else {
-                    if(Nap.PDF.Create.FromHTML(Nap.FileX.RenameIfExist(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + filePDFName + "_" + Nap.Carrera.Check(carrera) + ".pdf", 0), html)) {
-                        Nap.Notification.Show_ClickFile(getApplicationContext(), Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + filePDFName + "_" + Nap.Carrera.Check(carrera) + ".pdf", "HorarioDICIS", "Archivo descargado");
-                    }
+                    new CreatePDF().execute();
                 }
             }
         });
@@ -144,13 +144,23 @@ public class HorarioActivity extends AppCompatActivity {
         switch (requestCode) {
             case REQUEST_CREATEPDF: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (Nap.PDF.Create.FromHTML(Nap.FileX.RenameIfExist(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + filePDFName + "_" + Nap.Carrera.Check(carrera) + ".pdf", 0), html)) {
-                        Nap.Notification.Show_ClickFile(getApplicationContext(), Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + filePDFName + "_" + Nap.Carrera.Check(carrera) + ".pdf", "HorarioDICIS", "Archivo descargado");
-                    }
+                    new CreatePDF().execute();
                 } else {
                     Toast.makeText(HorarioActivity.this, getResources().getString(R.string.error_permissionWrite), Toast.LENGTH_LONG).show();
                 }
             }
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class CreatePDF extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            String filename = Nap.FileX.RenameIfExist(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + filePDFName + "_" + Nap.Carrera.Check(carrera) + ".pdf", 0);
+            if(Nap.PDF.Create.FromHTML(filename, html)) {
+                Nap.Notification.Show_ClickFile(getApplicationContext(), filename, getResources().getString(R.string.app_name), Nap.FileX.GetBaseFileName(filename));
+            }
+            return null;
         }
     }
 }

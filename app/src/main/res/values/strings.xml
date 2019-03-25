@@ -29,4 +29,6 @@
     <string name="vacio">Vacío</string>
     <string name="error_permissionWrite">La aplicación no tiene los permisos necesarios para guardar el PDF, verifique los permisos en Ajustes -> Aplicaciones</string>
     <string name="error_no_internet">No hay conexión a internet, el horario mostrado puede no ser el mas actualizado, le sugerimos conectarse a internet</string>
+    <string name="error_no_item">No se han agregado cursos a la lista</string>
+    <string name="generatePDF">Generar PDF</string>
 </resources>

@@ -90,7 +90,7 @@ class Horario extends SQLiteOpenHelper {
     //Creación de la base de datos
     private Template dbDICIS = new Template("horarioDICIS.db", 1);
     SQLiteDatabase database;
-    private String[] carreras = new String[]{"Artes Digitales", "Comunicaciones y Electrónica", "Eléctrica", "Enseñanza del Inglés",
+    private String[] carreras = new String[]{"Artes Digitales", "Comunicaciones y Electrónica", "Eléctrica",
             "Gestión Empresarial", "Mecánica", "Mecatrónica", "Sistemas Computacionales"};
     Horario(Context context) {
         super(context, "horarioDICIS.db", null, 1);
@@ -181,16 +181,20 @@ class Horario extends SQLiteOpenHelper {
         return db.rawQuery(cmd, null);
     }
 
+    android.database.Cursor runCMD(String cmd) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery(cmd, null);
+    }
+
     String CheckCarrera(String carrera) {
         //Check carrera
         if(carrera.equals(carreras[0])) return "ARTES";
         else if(carrera.equals(carreras[1])) return "ELECTRONICA";
         else if(carrera.equals(carreras[2])) return "ELECTRICA";
-        else if(carrera.equals(carreras[3])) return "INGLES";
-        else if(carrera.equals(carreras[4])) return "GESTION";
-        else if(carrera.equals(carreras[5])) return "MECANICA";
-        else if(carrera.equals(carreras[6])) return "MECATRONICA";
-        else if(carrera.equals(carreras[7])) return "SISTEMAS";
-        return "";
+        else if(carrera.equals(carreras[3])) return "GESTION";
+        else if(carrera.equals(carreras[4])) return "MECANICA";
+        else if(carrera.equals(carreras[5])) return "MECATRONICA";
+        else if(carrera.equals(carreras[6])) return "SISTEMAS";
+        return carrera;
     }
 }

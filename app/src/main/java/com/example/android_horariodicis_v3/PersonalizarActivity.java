@@ -1,8 +1,17 @@
 package com.example.android_horariodicis_v3;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,15 +19,59 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class PersonalizarActivity extends AppCompatActivity {
+    static final int REQUEST_CREATEPDF_CUSTOM = 113;
+    static final String filePDFName = "HorarioDICIS_PERSONAL";
     ArrayList<Nap.ListView.Cursos_item> lvItems = new ArrayList<>();
     ArrayList<Integer> idList = null;
+    String carrera;
     Button fbtAdd;
     Button btBack;
+    Button btPDF;
+    String html;
     Horario db;
+
+
+    private String convertStreamToString(InputStream is) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        try {
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append('\n');
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return sb.toString();
+    }
+
+    private boolean hasPermission(Context context, String... permissions) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for(String permission : permissions) {
+                if(ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +98,74 @@ public class PersonalizarActivity extends AppCompatActivity {
                 startActivityForResult(intent, 3);
             }
         });
+        //_______________ Botón para generar PDF
+        btPDF = findViewById(R.id.btGeneratePDF);
+        btPDF.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(idList == null) {
+                    Toast.makeText(PersonalizarActivity.this, getResources().getString(R.string.error_no_item), Toast.LENGTH_LONG).show();
+                }
+                if(idList.size() == 0) {
+                    Toast.makeText(PersonalizarActivity.this, getResources().getString(R.string.error_no_item), Toast.LENGTH_LONG).show();
+                }
+                carrera = Nap.FileX.Read(getFilesDir() + "/SCHDATA", "Carrera.txt");
+                carrera = Nap.Carrera.Check(carrera);
+                String cmd = "SELECT * FROM " + carrera + " WHERE ID IN (";
+                for(int i = 0; i<idList.size(); i++) {
+                    if(i < idList.size() - 1) cmd += String.valueOf(idList.get(i)) + ", " ;
+                    else cmd += String.valueOf(idList.get(i)) + ")";
+                }
+                Cursor cursor = db.runCMD(cmd);
+                if(Nap.XML.Generate(cursor, getFilesDir() + "/SCHDATA/xmlCUSTOM.xml")) {
+                    String xslt = convertStreamToString(getResources().openRawResource(R.raw.xsltdicisv));
+                    try {
+                        Nap.FileX.Save(xslt, getFilesDir() + "/SCHDATA/xsltDICIS.xslt");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    html = Nap.XML.ToHTML(new File(getFilesDir() + "/SCHDATA/xmlCUSTOM.xml"), new File(getFilesDir() + "/SCHDATA/xsltDICIS.xslt"));
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        if (!hasPermission(PersonalizarActivity.this, PERMISSIONS)) {
+                            ActivityCompat.requestPermissions(PersonalizarActivity.this, PERMISSIONS, REQUEST_CREATEPDF_CUSTOM);
+                        }
+                        else {
+                            new PersonalizarActivity.CreatePDF().execute();
+                        }
+                    }
+                    else {
+                        new PersonalizarActivity.CreatePDF().execute();
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CREATEPDF_CUSTOM: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    new PersonalizarActivity.CreatePDF().execute();
+                } else {
+                    Toast.makeText(PersonalizarActivity.this, getResources().getString(R.string.error_permissionWrite), Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class CreatePDF extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            String filename = Nap.FileX.RenameIfExist(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + filePDFName + "_" + Nap.Carrera.Check(carrera) + ".pdf", 0);
+            if(Nap.PDF.Create.FromHTML(filename, html)) {
+                Nap.Notification.Show_ClickFile(getApplicationContext(), filename, getResources().getString(R.string.app_name), Nap.FileX.GetBaseFileName(filename));
+            }
+            return null;
+        }
     }
 
     @Override
@@ -52,6 +173,7 @@ public class PersonalizarActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         // Save the state of item position
         outState.putParcelableArrayList("ITEM", lvItems);
+        outState.putIntegerArrayList("ID", idList);
     }
 
     @Override
@@ -59,6 +181,7 @@ public class PersonalizarActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         //_______________ Restaurar lvItems
         lvItems = savedInstanceState.getParcelableArrayList("ITEM");
+        idList = savedInstanceState.getIntegerArrayList("ID");
         //_______________ TextView
         TextView tbxEmpty = findViewById(R.id.tbxEmpty);
         //_______________ Crear listView

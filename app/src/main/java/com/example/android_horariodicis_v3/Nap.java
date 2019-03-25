@@ -29,6 +29,7 @@ import com.itextpdf.tool.xml.XMLWorkerHelper;
 
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -103,7 +104,8 @@ class Nap
                     .setContentText(messageN)
                     .setDefaults(NotificationCompat.DEFAULT_ALL)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .setContentIntent(pendingIntent);
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true);
             NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
             builder.setChannelId(BuildConfig.APPLICATION_ID);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -120,6 +122,103 @@ class Nap
     }
 
     static class XML {
+        static boolean Generate(android.database.Cursor cursor, String path) {
+            try {
+                if(cursor.getCount() == 0) return false;
+                DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+                //root
+                Document document = documentBuilder.newDocument();
+                Element rootElement = document.createElement("list");
+                document.appendChild(rootElement);
+                while(cursor.moveToNext()) {
+                    //item
+                    Element item = document.createElement("item");
+                    rootElement.appendChild(item);
+                    //___________Elements
+                    Element AreaDeLaUda = document.createElement("AreaDeLaUda");
+                    AreaDeLaUda.appendChild(document.createTextNode(Nap.Cursor.GetElement(cursor, "AreaDeLaUda")));
+                    item.appendChild(AreaDeLaUda);
+                    //
+                    Element Clave = document.createElement("Clave");
+                    Clave.appendChild(document.createTextNode(Nap.Cursor.GetElement(cursor, "Clave")));
+                    item.appendChild(Clave);
+                    //
+                    Element UnidadDeAprendizaje = document.createElement("UnidadDeAprendizaje");
+                    UnidadDeAprendizaje.appendChild(document.createTextNode(Nap.Cursor.GetElement(cursor, "UnidadDeAprendizaje")));
+                    item.appendChild(UnidadDeAprendizaje);
+                    //
+                    Element HorasSem = document.createElement("HorasSem");
+                    HorasSem.appendChild(document.createTextNode(Nap.Cursor.GetElement(cursor, "HorasSem")));
+                    item.appendChild(HorasSem);
+                    //
+                    Element Requisitos = document.createElement("Requisitos");
+                    Requisitos.appendChild(document.createTextNode(Nap.Cursor.GetElement(cursor, "Requisitos")));
+                    item.appendChild(Requisitos);
+                    //
+                    Element Grupo = document.createElement("Grupo");
+                    Grupo.appendChild(document.createTextNode(Nap.Cursor.GetElement(cursor, "Grupo")));
+                    item.appendChild(Grupo);
+                    //
+                    Element Lun = document.createElement("Lun");
+                    Lun.appendChild(document.createTextNode(Nap.Cursor.GetElement(cursor, "Lun")));
+                    item.appendChild(Lun);
+                    //
+                    Element Mar = document.createElement("Mar");
+                    Mar.appendChild(document.createTextNode(Nap.Cursor.GetElement(cursor, "Mar")));
+                    item.appendChild(Mar);
+                    //
+                    Element Mie = document.createElement("Mie");
+                    Mie.appendChild(document.createTextNode(Nap.Cursor.GetElement(cursor, "Mie")));
+                    item.appendChild(Mie);
+                    //
+                    Element Jue = document.createElement("Jue");
+                    Jue.appendChild(document.createTextNode(Nap.Cursor.GetElement(cursor, "Jue")));
+                    item.appendChild(Jue);
+                    //
+                    Element Vie = document.createElement("Vie");
+                    Vie.appendChild(document.createTextNode(Nap.Cursor.GetElement(cursor, "Vie")));
+                    item.appendChild(Vie);
+                    //
+                    Element Sab = document.createElement("Sab");
+                    Sab.appendChild(document.createTextNode(Nap.Cursor.GetElement(cursor, "Sab")));
+                    item.appendChild(Sab);
+                    //
+                    Element Aula = document.createElement("Aula");
+                    Aula.appendChild(document.createTextNode(Nap.Cursor.GetElement(cursor, "Aula")));
+                    item.appendChild(Aula);
+                    //
+                    Element Profesor = document.createElement("Profesor");
+                    Profesor.appendChild(document.createTextNode(Nap.Cursor.GetElement(cursor, "Profesor")));
+                    item.appendChild(Profesor);
+                    //
+                    Element Presidente = document.createElement("Presidente");
+                    Presidente.appendChild(document.createTextNode(Nap.Cursor.GetElement(cursor, "Presidente")));
+                    item.appendChild(Presidente);
+                    //
+                    Element Vocal = document.createElement("Vocal");
+                    Vocal.appendChild(document.createTextNode(Nap.Cursor.GetElement(cursor, "Vocal")));
+                    item.appendChild(Vocal);
+                }
+                TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                Transformer transformer = transformerFactory.newTransformer();
+                StringWriter writer = new StringWriter();
+                transformer.transform(new DOMSource(document), new StreamResult(writer));
+                String xml = writer.getBuffer().toString().replaceAll("\n|\r", "");
+                Nap.FileX.Save(xml, path);
+                return true;
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
+            } catch (TransformerConfigurationException e) {
+                e.printStackTrace();
+            } catch (TransformerException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
         static String ToHTML(File XML, File XSLT) {
             StringWriter res = new StringWriter();
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -176,16 +275,15 @@ class Nap
 
     static class Carrera {
         static String Check(String input) {
-            String[] carreras = new String[]{"Artes Digitales", "Comunicaciones y Electrónica", "Eléctrica", "Enseñanza del Inglés",
+            String[] carreras = new String[]{"Artes Digitales", "Comunicaciones y Electrónica", "Eléctrica",
                     "Gestión Empresarial", "Mecánica", "Mecatrónica", "Sistemas Computacionales"};
             if(input.equals(carreras[0])) return "ARTES";
             else if(input.equals(carreras[1])) return "ELECTRONICA";
             else if(input.equals(carreras[2])) return "ELECTRICA";
-            else if(input.equals(carreras[3])) return "INGLES";
-            else if(input.equals(carreras[4])) return "GESTION";
-            else if(input.equals(carreras[5])) return "MECANICA";
-            else if(input.equals(carreras[6])) return "MECATRONICA";
-            else if(input.equals(carreras[7])) return "SISTEMAS";
+            else if(input.equals(carreras[3])) return "GESTION";
+            else if(input.equals(carreras[4])) return "MECANICA";
+            else if(input.equals(carreras[5])) return "MECATRONICA";
+            else if(input.equals(carreras[6])) return "SISTEMAS";
             return input;
         }
     }
@@ -617,6 +715,14 @@ class Nap
     }
 
     static class FileX {
+
+        static String GetBaseFileName(String fullfilename) {
+            String filename = "";
+            int i = fullfilename.lastIndexOf(".");
+            int p = Math.max(fullfilename.lastIndexOf("/"), fullfilename.lastIndexOf("\\"));
+            filename = fullfilename.substring(p + 1, i);
+            return filename;
+        }
 
         static String GetFileName(String fullfilename) {
             String filename = "";
