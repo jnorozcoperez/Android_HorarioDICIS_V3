@@ -19,10 +19,10 @@
 
         <ImageView
             android:id="@+id/imgCheck"
-            app:srcCompat="@drawable/check"
             android:layout_width="20dp"
             android:layout_height="0dp"
             android:layout_weight="1"
+            app:srcCompat="@drawable/check"
             tools:ignore="ContentDescription" />
     </LinearLayout>
 

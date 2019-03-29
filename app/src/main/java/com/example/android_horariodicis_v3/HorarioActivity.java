@@ -27,9 +27,11 @@ import java.util.ArrayList;
 
 public class HorarioActivity extends AppCompatActivity {
     static final int REQUEST_CREATEPDF = 112;
+    static final int REQUEST_SHAREPDF = 113;
     static final String filePDFName = "HorarioDICIS";
     Button btBack;
     Button btPDF;
+    Button btShare;
     String carrera;
     String html;
     Horario db;
@@ -68,7 +70,7 @@ public class HorarioActivity extends AppCompatActivity {
 
     private ArrayList<Nap.ListView.Cursos_item> GetArrayItems() {
         ArrayList<Nap.ListView.Cursos_item> lvItems = new ArrayList<>();
-        String carrera = db.CheckCarrera(getIntent().getStringExtra("CARRERA"));
+        String carrera = db.CheckCarrera(Nap.FileX.Read(getFilesDir() + "/SCHDATA", "Carrera.txt"));
         Cursor cursor = db.viewData(carrera);
         //_________________ Leer el horario
         if(cursor.getCount() != 0) {
@@ -95,7 +97,7 @@ public class HorarioActivity extends AppCompatActivity {
         //_______________ Crear base de datos
         db = new Horario(this);
         //_______________ Obtener carrera
-        carrera = getIntent().getStringExtra("CARRERA");
+        carrera = Nap.FileX.Read(getFilesDir() + "/SCHDATA", "Carrera.txt");
         //_______________ Crear listView
         ListView lvitemX = findViewById(R.id.listViewCursos);
         //_______________ Crear objeto listView personalizada para los cursos
@@ -136,6 +138,31 @@ public class HorarioActivity extends AppCompatActivity {
                 }
             }
         });
+        btShare = findViewById(R.id.btShare);
+        btShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String xslt = convertStreamToString(getResources().openRawResource(R.raw.xsltdicisv));
+                try {
+                    Nap.FileX.Save(xslt, getFilesDir() + "/SCHDATA/xsltDICIS.xslt");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                html = Nap.XML.ToHTML(new File(getFilesDir() + "/SCHDATA/xmlDICIS.xml"), new File(getFilesDir() + "/SCHDATA/xsltDICIS.xslt"));
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                    if (!hasPermission(HorarioActivity.this, PERMISSIONS)) {
+                        ActivityCompat.requestPermissions(HorarioActivity.this, PERMISSIONS, REQUEST_SHAREPDF);
+                    }
+                    else {
+                        new SharePDF().execute();
+                    }
+                }
+                else {
+                    new SharePDF().execute();
+                }
+            }
+        });
     }
 
     @Override
@@ -149,6 +176,13 @@ public class HorarioActivity extends AppCompatActivity {
                     Toast.makeText(HorarioActivity.this, getResources().getString(R.string.error_permissionWrite), Toast.LENGTH_LONG).show();
                 }
             }
+            case REQUEST_SHAREPDF: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    new SharePDF().execute();
+                } else {
+                    Toast.makeText(HorarioActivity.this, getResources().getString(R.string.error_permissionOpen), Toast.LENGTH_LONG).show();
+                }
+            }
         }
     }
 
@@ -159,6 +193,20 @@ public class HorarioActivity extends AppCompatActivity {
             String filename = Nap.FileX.RenameIfExist(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + filePDFName + "_" + Nap.Carrera.Check(carrera) + ".pdf", 0);
             if(Nap.PDF.Create.FromHTML(filename, html)) {
                 Nap.Notification.Show_ClickFile(getApplicationContext(), filename, getResources().getString(R.string.app_name), Nap.FileX.GetBaseFileName(filename));
+            }
+            return null;
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class SharePDF extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            String filename = getFilesDir() + File.separator + "SCHDATA" + File.separator + "SharePDF.pdf";
+            File fileX = new File(filename);
+            if(fileX.exists()) fileX.delete();
+            if(Nap.PDF.Create.FromHTML(filename, html)) {
+                Nap.Share.File(getApplicationContext(), filename);
             }
             return null;
         }

@@ -28,7 +28,7 @@ public class CarreraChooseActivity extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("result", dropdown.getSelectedItem().toString());
+                returnIntent.putExtra("CARRERA", dropdown.getSelectedItem().toString());
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();
             }

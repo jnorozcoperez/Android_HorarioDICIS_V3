@@ -16,7 +16,7 @@
         android:layout_marginEnd="23dp"
         android:layout_marginBottom="382dp"
         android:contentDescription="@string/imageEscudo"
-        app:srcCompat="@drawable/escudohdpi" />
+        app:srcCompat="@drawable/escudoug" />
 
     <Spinner
         android:id="@+id/ddCarrera"

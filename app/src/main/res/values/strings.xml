@@ -27,8 +27,16 @@
     <string name="Cancelar">Cancelar</string>
     <string name="addtolist">Añadir a la Lista</string>
     <string name="vacio">Vacío</string>
+    <string name="generatePDF">Generar PDF</string>
+    <string name="barButtom">button bar</string>
+    <string name="open_with">Abrir con: </string>
+    <string name="share_with">Compartir usando:</string>
     <string name="error_permissionWrite">La aplicación no tiene los permisos necesarios para guardar el PDF, verifique los permisos en Ajustes -> Aplicaciones</string>
+    <string name="error_permissionOpen">La aplicación no tiene los permisos necesarios para compartir el PDF, verifique los permisos en Ajustes -> Aplicaciones</string>
     <string name="error_no_internet">No hay conexión a internet, el horario mostrado puede no ser el mas actualizado, le sugerimos conectarse a internet</string>
     <string name="error_no_item">No se han agregado cursos a la lista</string>
-    <string name="generatePDF">Generar PDF</string>
+    <string name="error_repeat_item">El curso seleccionado ya ha sido agregado previamente</string>
+
+
+
 </resources>

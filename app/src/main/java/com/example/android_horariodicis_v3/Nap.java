@@ -80,6 +80,28 @@ class Nap
 {
     Nap(){ }
 
+    static class Share {
+        static void File(Context context, String filename) {
+            File file = new File(filename);
+            MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+            String type = mimeTypeMap.getMimeTypeFromExtension("pdf");
+            Uri uri;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file);
+            }
+            else {
+                uri = Uri.fromFile(file);
+            }
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setDataAndType(uri, type);
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            Intent chooser = Intent.createChooser(intent, context.getResources().getString(R.string.share_with));
+            if(chooser == null) return;
+            context.startActivity(chooser);
+        }
+    }
+
     static class Notification {
         static void Show_ClickFile(Context context, String filename, String titleN, String messageN) {
             File file = new File(filename);
@@ -95,9 +117,10 @@ class Nap
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(uri, type);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            Intent chooser = Intent.createChooser(intent, "Choose an app to open with:");
-            if(chooser==null) return;
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            //Intent chooser = Intent.createChooser(intent, "Choose an app to open with:");
+            Intent chooser = Intent.createChooser(intent, context.getResources().getString(R.string.open_with));
+            if(chooser == null) return;
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, chooser, PendingIntent.FLAG_CANCEL_CURRENT);
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default")
                     .setSmallIcon(R.mipmap.ic_launcher_round)
                     .setContentTitle(titleN)
@@ -118,6 +141,7 @@ class Nap
             }
             assert notificationManager != null;
             notificationManager.notify(2, builder.build());
+            context.startActivity(chooser);
         }
     }
 
@@ -204,7 +228,7 @@ class Nap
                 Transformer transformer = transformerFactory.newTransformer();
                 StringWriter writer = new StringWriter();
                 transformer.transform(new DOMSource(document), new StreamResult(writer));
-                String xml = writer.getBuffer().toString().replaceAll("\n|\r", "");
+                String xml = writer.getBuffer().toString().replaceAll("[\n\r]", "");
                 Nap.FileX.Save(xml, path);
                 return true;
             } catch (ParserConfigurationException e) {
@@ -309,12 +333,13 @@ class Nap
             store.connect();
             Folder folder = store.getFolder(label);
             try {
-                folder.open(Folder.READ_WRITE);
-            } catch (MessagingException ex) {
                 folder.open(Folder.READ_ONLY);
+            } catch (MessagingException ex) {
+                folder.open(Folder.READ_WRITE);
             }
 
-            Message[] messagesX = folder.search(new FlagTerm(new Flags(Flags.Flag.RECENT), false));
+            //Message[] messagesX = folder.search(new FlagTerm(new Flags(Flags.Flag.RECENT), false));
+            Message[] messagesX = folder.getMessages();
 
             for(Message msg: messagesX) {
                 int i;
@@ -387,6 +412,7 @@ class Nap
     }
 
     static class Cursor {
+
         static String GetElement(android.database.Cursor cursor, String columnName) {
             for(int i = 0; i<cursor.getColumnCount(); i++) {
                 if (columnName.equals(cursor.getColumnName(i))) return cursor.getString(i);
@@ -534,10 +560,13 @@ class Nap
         static class AddCursos extends BaseAdapter {
             private Context context;
             private ArrayList<Cursos_item> lvItems;
+            private ArrayList<Integer> idList;
             TextView empty;
-            AddCursos(Context context, ArrayList<Cursos_item> lvItems, TextView empty)  {
+
+            AddCursos(Context context, ArrayList<Cursos_item> lvItems, ArrayList<Integer> idList, TextView empty)  {
                 this.context = context;
                 this.lvItems = lvItems;
+                this.idList = idList;
                 this.empty = empty;
             }
 
@@ -577,20 +606,22 @@ class Nap
                     @Override
                     public void onClick(View v) {
                         lvItems.remove(position);
+                        idList.remove(position);
                         if(lvItems.isEmpty()) {
                             if(empty != null) {
                                 empty.setVisibility(View.VISIBLE);
                                 empty.setEnabled(true);
                             }
                         }
-                        updateRecords(lvItems);
+                        updateRecords(lvItems, idList);
                     }
                 });
                 return convertView;
             }
 
-            void updateRecords(ArrayList<Cursos_item> lvItems) {
+            void updateRecords(ArrayList<Cursos_item> lvItems, ArrayList<Integer> idList) {
                 this.lvItems = lvItems;
+                this.idList = idList;
                 notifyDataSetChanged();
             }
         }

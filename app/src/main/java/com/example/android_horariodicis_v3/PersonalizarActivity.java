@@ -32,7 +32,7 @@ public class PersonalizarActivity extends AppCompatActivity {
     static final int REQUEST_CREATEPDF_CUSTOM = 113;
     static final String filePDFName = "HorarioDICIS_PERSONAL";
     ArrayList<Nap.ListView.Cursos_item> lvItems = new ArrayList<>();
-    ArrayList<Integer> idList = null;
+    ArrayList<Integer> idList = new ArrayList<>();
     String carrera;
     Button fbtAdd;
     Button btBack;
@@ -103,20 +103,19 @@ public class PersonalizarActivity extends AppCompatActivity {
         btPDF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(idList == null) {
-                    Toast.makeText(PersonalizarActivity.this, getResources().getString(R.string.error_no_item), Toast.LENGTH_LONG).show();
-                }
                 if(idList.size() == 0) {
-                    Toast.makeText(PersonalizarActivity.this, getResources().getString(R.string.error_no_item), Toast.LENGTH_LONG).show();
+                    Toast errorToast = Toast.makeText(PersonalizarActivity.this, getResources().getString(R.string.error_no_item), Toast.LENGTH_LONG);
+                    errorToast.show();
+                    return;
                 }
                 carrera = Nap.FileX.Read(getFilesDir() + "/SCHDATA", "Carrera.txt");
                 carrera = Nap.Carrera.Check(carrera);
-                String cmd = "SELECT * FROM " + carrera + " WHERE ID IN (";
+                StringBuilder cmd = new StringBuilder("SELECT * FROM " + carrera + " WHERE ID IN (");
                 for(int i = 0; i<idList.size(); i++) {
-                    if(i < idList.size() - 1) cmd += String.valueOf(idList.get(i)) + ", " ;
-                    else cmd += String.valueOf(idList.get(i)) + ")";
+                    if(i < idList.size() - 1) cmd.append(String.valueOf(idList.get(i))).append(", ");
+                    else cmd.append(String.valueOf(idList.get(i))).append(")");
                 }
-                Cursor cursor = db.runCMD(cmd);
+                Cursor cursor = db.runCMD(cmd.toString());
                 if(Nap.XML.Generate(cursor, getFilesDir() + "/SCHDATA/xmlCUSTOM.xml")) {
                     String xslt = convertStreamToString(getResources().openRawResource(R.raw.xsltdicisv));
                     try {
@@ -150,7 +149,8 @@ public class PersonalizarActivity extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     new PersonalizarActivity.CreatePDF().execute();
                 } else {
-                    Toast.makeText(PersonalizarActivity.this, getResources().getString(R.string.error_permissionWrite), Toast.LENGTH_LONG).show();
+                    Toast errorToast = Toast.makeText(PersonalizarActivity.this, getResources().getString(R.string.error_permissionWrite), Toast.LENGTH_LONG);
+                    errorToast.show();
                 }
             }
         }
@@ -187,7 +187,7 @@ public class PersonalizarActivity extends AppCompatActivity {
         //_______________ Crear listView
         final ListView lvAux = findViewById(R.id.listViewAdd);
         //_______________ Crear objeto listView personalizada para los cursos
-        final Nap.ListView.AddCursos lvCursoX = new Nap.ListView.AddCursos(this, lvItems, tbxEmpty);
+        final Nap.ListView.AddCursos lvCursoX = new Nap.ListView.AddCursos(this, lvItems, idList, tbxEmpty);
         lvAux.setAdapter(lvCursoX);
         if(!lvItems.isEmpty()) {
             tbxEmpty.setVisibility(View.GONE);
@@ -201,8 +201,23 @@ public class PersonalizarActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 //_______________ TextView
                 TextView tbxEmpty = findViewById(R.id.tbxEmpty);
-                idList = data.getIntegerArrayListExtra("RESULT");
-                if(idList == null) return;
+                ArrayList<Integer> idListX = data.getIntegerArrayListExtra("RESULT");
+                if(idListX == null) return;
+                int slist = idListX.size();
+                if(slist>0) {
+                    for(int i = 0; i<slist; i++) {
+                        if(this.idList.contains(idListX.get(i))) {
+                            idListX.remove(i);
+                            i--;
+                            slist--;
+                        }
+                    }
+                    this.idList.addAll(idListX);
+                } else return;
+                if(idListX.size() == 0){
+                    Toast errorToast = Toast.makeText(PersonalizarActivity.this, getResources().getString(R.string.error_repeat_item), Toast.LENGTH_LONG);
+                    errorToast.show();
+                }
                 String carrera = Nap.Carrera.Check(Nap.FileX.Read(getFilesDir() + "/SCHDATA", "Carrera.txt"));
                 Cursor cursor = db.viewData(carrera);
                 //_______________ Buscar los elementos seleccionados
@@ -210,7 +225,7 @@ public class PersonalizarActivity extends AppCompatActivity {
                     //_______________ Recorrer los datos con el objeto cursor
                     while(cursor.moveToNext()) {
                         int finalID = Nap.Cursor.GetID(cursor, "ID");
-                        if(idList.contains(finalID)) {
+                        if(idListX.contains(finalID)) {
                             //_______________ Agregar un curso al ArrayList diseñado para contener el horario
                             lvItems.add(new Nap.ListView.Cursos_item(false, Nap.Cursor.GetID(cursor, "ID"), Nap.Cursor.GetElement(cursor, "HorasSem"), Nap.Cursor.GetElement(cursor, "UnidadDeAprendizaje"),
                                     Nap.Cursor.GetElement(cursor, "AreaDeLaUda"), Nap.Cursor.GetElement(cursor, "Clave"),
@@ -220,7 +235,7 @@ public class PersonalizarActivity extends AppCompatActivity {
                         }
                     }
                     //_______________ Crear objeto listView personalizada para los cursos
-                    Nap.ListView.AddCursos lvCursoX = new Nap.ListView.AddCursos(this, lvItems, tbxEmpty);
+                    Nap.ListView.AddCursos lvCursoX = new Nap.ListView.AddCursos(this, lvItems, idList, tbxEmpty);
                     //_______________ Vaciar todos los datos de los cursos a la listView
                     ListView lvAux = findViewById(R.id.listViewAdd);
                     lvAux.setAdapter(lvCursoX);
