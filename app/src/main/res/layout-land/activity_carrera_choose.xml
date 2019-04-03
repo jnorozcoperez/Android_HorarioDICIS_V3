@@ -11,52 +11,45 @@
         android:id="@+id/imageView"
         android:layout_width="330dp"
         android:layout_height="129dp"
-        android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="38dp"
-        android:layout_marginEnd="43dp"
-        android:layout_marginBottom="382dp"
+        android:layout_marginEnd="204dp"
+        android:layout_marginBottom="226dp"
         android:contentDescription="@string/imageEscudo"
         app:srcCompat="@drawable/escudoug" />
 
     <Spinner
         android:id="@+id/ddCarrera"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="37dp"
-        android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="79dp"
-        android:layout_marginEnd="82dp"
-        android:layout_marginBottom="222dp"
+        android:layout_marginEnd="314dp"
+        android:layout_marginBottom="108dp"
         android:background="@android:drawable/btn_dropdown"
         android:contentDescription="@string/dropDowCarrera"
-        android:spinnerMode="dropdown"
-        android:textSize="12sp" />
+        android:spinnerMode="dropdown" />
 
     <TextView
         android:id="@+id/lbCarrera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="106dp"
-        android:layout_marginEnd="105dp"
-        android:layout_marginBottom="266dp"
+        android:layout_marginEnd="335dp"
+        android:layout_marginBottom="165dp"
         android:text="@string/carrera"
         android:textColor="@color/colorWhite"
         android:textSize="23sp" />
 
     <Button
         android:id="@+id/btNext"
-        android:layout_width="wrap_content"
+        android:layout_width="118dp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="33dp"
-        android:layout_marginBottom="62dp"
+        android:layout_marginEnd="121dp"
+        android:layout_marginBottom="105dp"
         android:text="@string/next" />
 
 </RelativeLayout>

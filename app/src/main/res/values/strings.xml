@@ -2,6 +2,8 @@
     <string name="app_name">Horario de DICIS</string>
     <string name="strHorario">HORARIO</string>
     <string name="strPersonalizar">PERSONALIZAR</string>
+    <string name="strActualizar">ACTUALIZAR</string>
+    <string name="strCambiarCarrera">CARRERA</string>
     <string name="imageEscudo">imgEscudo</string>
     <string name="dropDowCarrera">dropDowCarrera</string>
     <string name="carrera">¿Cuál es tu carrera?</string>
@@ -18,6 +20,7 @@
     <string name="vie">Vie</string>
     <string name="sab">Sab</string>
     <string name="aula">Aula</string>
+    <string name="grupo">Grupo</string>
     <string name="profesor">Profesor</string>
     <string name="loading">Buscando el horario más actual…</string>
     <string name="titleHorario">Horario de DICIS</string>
@@ -36,7 +39,4 @@
     <string name="error_no_internet">No hay conexión a internet, el horario mostrado puede no ser el mas actualizado, le sugerimos conectarse a internet</string>
     <string name="error_no_item">No se han agregado cursos a la lista</string>
     <string name="error_repeat_item">El curso seleccionado ya ha sido agregado previamente</string>
-
-
-
 </resources>

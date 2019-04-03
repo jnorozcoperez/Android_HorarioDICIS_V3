@@ -414,6 +414,7 @@ class Nap
     static class Cursor {
 
         static String GetElement(android.database.Cursor cursor, String columnName) {
+            cursor.getString(cursor.getColumnIndex(columnName));
             for(int i = 0; i<cursor.getColumnCount(); i++) {
                 if (columnName.equals(cursor.getColumnName(i))) return cursor.getString(i);
             }

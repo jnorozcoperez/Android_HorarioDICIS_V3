@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/background"
     android:orientation="vertical"
-    tools:context=".SearchActivity">
+    tools:context=".PersonalizarActivity">
 
     <TableRow
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
         android:gravity="center_vertical">
 
         <Button
-            android:id="@+id/btBack"
+            android:id="@+id/btPBack"
             android:layout_width="42dp"
             android:layout_height="42dp"
             android:layout_marginLeft="8dp"
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_vertical|center"
-            android:text="@string/addtolist"
+            android:text="@string/titlePersonalizar"
             android:textAlignment="center"
             android:textColor="@color/colorWhite"
             android:textSize="19sp"
@@ -37,11 +37,11 @@
             tools:ignore="RtlHardcoded" />
 
         <Button
-            android:id="@+id/btAddItem"
+            android:id="@+id/fbtAdd"
             android:layout_width="42dp"
             android:layout_height="42dp"
             android:layout_marginEnd="8dp"
-            android:background="@drawable/btadditem"
+            android:background="@drawable/btadd"
             android:gravity="center_vertical|center" />
     </TableRow>
 
@@ -57,31 +57,14 @@
         android:showDividers="middle">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:foregroundGravity="center"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/imgCheck"
-                android:layout_width="20dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/empty"
-                tools:ignore="ContentDescription" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="170dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
             android:gravity="center"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/stbxUnidadAprendizaje"
+                android:id="@+id/atbxUnidadAprendizaje"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/unidad_de_aprendizaje"
@@ -94,7 +77,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/stbxAreaUDA"
+                    android:id="@+id/atbxAreaUDA"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/area_de_la_uda"
@@ -104,7 +87,7 @@
                     tools:ignore="SmallSp" />
 
                 <TextView
-                    android:id="@+id/stbxClave"
+                    android:id="@+id/atbxClave"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/clave"
@@ -118,8 +101,8 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/stbxGrupo"
-            android:layout_width="40dp"
+            android:id="@+id/atbxGrupo"
+            android:layout_width="60dp"
             android:layout_height="match_parent"
             android:gravity="center_vertical|center_horizontal|center"
             android:text="@string/grupo"
@@ -128,29 +111,81 @@
             android:textSize="12sp" />
 
         <TextView
-            android:id="@+id/stbxProfesor"
-            android:layout_width="113dp"
+            android:id="@+id/atbxProfesor"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginEnd="5dp"
+            android:layout_weight="2"
             android:gravity="center_vertical"
             android:text="@string/profesor"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="12sp" />
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0">
+
+            <Button
+                android:id="@+id/abtDelete"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="0"
+                android:background="@drawable/empty"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/listViewSearchCursos"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_weight="1"
-        android:choiceMode="multipleChoiceModal"
-        android:clickable="true"
-        android:focusable="true">
+        android:layout_height="0dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_weight="1">
 
-    </ListView>
+        <ListView
+            android:id="@+id/listViewAdd"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorWhite"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="8dp">
+
+        </ListView>
+
+        <TextView
+            android:id="@+id/tbxEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:foregroundGravity="center_vertical|center"
+            android:gravity="center_vertical|center_horizontal|center"
+            android:text="@string/vacio"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/listViewAdd"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/listViewAdd" />
+    </android.support.constraint.ConstraintLayout>
+
+    <Button
+        android:id="@+id/btGeneratePDF"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/generatePDF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
 </LinearLayout>

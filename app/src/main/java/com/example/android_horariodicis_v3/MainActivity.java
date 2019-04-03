@@ -20,8 +20,6 @@ public class MainActivity extends AppCompatActivity {
     Button btPersonalizar;
     Button btChooseCarrera;
     String carrera;
-    Nap.MailService mailService = null;
-//asdasdasdasdasd
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,9 +80,9 @@ public class MainActivity extends AppCompatActivity {
                 //_______________ Leer archivo que identifica carrera
                 carrera = Nap.FileX.Read(getFilesDir() + "/SCHDATA", "Carrera.txt");
                 //_______________ Mostrar ventana de carga
-                Intent loadingIntent = new Intent(getBaseContext(), LoadingActivity.class);
-                loadingIntent.putExtra("FIRST", false);
-                startActivityForResult(loadingIntent, 2);
+                //Intent loadingIntent = new Intent(getBaseContext(), LoadingActivity.class);
+                //loadingIntent.putExtra("FIRST", false);
+                //startActivityForResult(loadingIntent, 2);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,11 +91,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 1) {
+            File folder = new File(getFilesDir() + "/SCHDATA");
+            boolean isFirst = folder.exists();
             if (resultCode == Activity.RESULT_OK) {
                 //_______________ Crear folder para almacenar archivos permanentes
-                File folder = new File(getFilesDir() + "/SCHDATA");
-                boolean isFirst = false;
-                if(folder.mkdir()) isFirst = true;
+                isFirst = folder.mkdir();
                 carrera = data.getStringExtra("CARRERA");
                 try {
                     Nap.FileX.Save(carrera, getFilesDir() + "/SCHDATA/Carrera.txt");
@@ -108,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent loadingIntent = new Intent(getBaseContext(), LoadingActivity.class);
                 loadingIntent.putExtra("FIRST", isFirst);
                 startActivityForResult(loadingIntent, 2);
-            } else {
+            } else if(!isFirst) {
                 finish();
             }
         }
