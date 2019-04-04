@@ -129,7 +129,7 @@
 
         <TextView
             android:id="@+id/stbxProfesor"
-            android:layout_width="113dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginEnd="5dp"
             android:gravity="center_vertical"

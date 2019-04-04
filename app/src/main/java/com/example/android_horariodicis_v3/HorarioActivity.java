@@ -3,6 +3,7 @@ package com.example.android_horariodicis_v3;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -192,7 +193,8 @@ public class HorarioActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             String filename = Nap.FileX.RenameIfExist(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + filePDFName + "_" + Nap.Carrera.Check(carrera) + ".pdf", 0);
             if(Nap.PDF.Create.FromHTML(filename, html)) {
-                Nap.Notification.Show_ClickFile(getApplicationContext(), filename, getResources().getString(R.string.app_name), Nap.FileX.GetBaseFileName(filename));
+                Intent chooser = Nap.Notification.Show_ClickFile(getApplication(), filename, getResources().getString(R.string.app_name), Nap.FileX.GetBaseFileName(filename));
+                startActivity(chooser);
             }
             return null;
         }
@@ -206,7 +208,8 @@ public class HorarioActivity extends AppCompatActivity {
             File fileX = new File(filename);
             if(fileX.exists()) fileX.delete();
             if(Nap.PDF.Create.FromHTML(filename, html)) {
-                Nap.Share.File(getApplicationContext(), filename);
+                Intent chooser = Nap.Share.File(getApplication(), filename);
+                startActivity(chooser);
             }
             return null;
         }

@@ -129,7 +129,6 @@ class Horario extends SQLiteOpenHelper {
     }
 
     void addItems(Document doc, String carrera) {
-        String as = doc.getDocumentElement().getNodeName();
         NodeList nodeList = doc.getDocumentElement().getElementsByTagName("item");
         String[] reference = new String[]{"AreaDeLaUda", "UnidadDeAprendizaje", "HorasSem", "Clave",
                 "Requisitos", "Grupo", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Aula", "Profesor", "Presidente", "Vocal"};

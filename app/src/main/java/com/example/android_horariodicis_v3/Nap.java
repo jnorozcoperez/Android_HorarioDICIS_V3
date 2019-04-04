@@ -27,6 +27,7 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -43,6 +44,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -81,7 +83,7 @@ class Nap
     Nap(){ }
 
     static class Share {
-        static void File(Context context, String filename) {
+        static Intent File(Context context, String filename) {
             File file = new File(filename);
             MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
             String type = mimeTypeMap.getMimeTypeFromExtension("pdf");
@@ -97,13 +99,13 @@ class Nap
             intent.putExtra(Intent.EXTRA_STREAM, uri);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             Intent chooser = Intent.createChooser(intent, context.getResources().getString(R.string.share_with));
-            if(chooser == null) return;
-            context.startActivity(chooser);
+            if(chooser == null) return null;
+            return chooser;
         }
     }
 
     static class Notification {
-        static void Show_ClickFile(Context context, String filename, String titleN, String messageN) {
+        static Intent Show_ClickFile(Context context, String filename, String titleN, String messageN) {
             File file = new File(filename);
             MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
             String type = mimeTypeMap.getMimeTypeFromExtension("pdf");
@@ -119,7 +121,7 @@ class Nap
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             //Intent chooser = Intent.createChooser(intent, "Choose an app to open with:");
             Intent chooser = Intent.createChooser(intent, context.getResources().getString(R.string.open_with));
-            if(chooser == null) return;
+            if(chooser == null) return null;
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, chooser, PendingIntent.FLAG_CANCEL_CURRENT);
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default")
                     .setSmallIcon(R.mipmap.ic_launcher_round)
@@ -141,7 +143,8 @@ class Nap
             }
             assert notificationManager != null;
             notificationManager.notify(2, builder.build());
-            context.startActivity(chooser);
+            //context.startActivity(chooser);
+            return chooser;
         }
     }
 
@@ -313,14 +316,11 @@ class Nap
     }
 
     static class MailService {
-        private int messageCount = 0;
-        private ArrayList<String> fromMessage = new ArrayList<>();
-        private ArrayList<String> subjectMessage = new ArrayList<>();
-        private ArrayList<Date> dateMessage = new ArrayList<>();
-        private ArrayList<StringBuilder> contentMessage = new ArrayList<>();
+        private String xmlHorario;
         private Document doc = null;
 
         MailService(String label) throws Exception {
+            xmlHorario = "";
             URLName url = new URLName("imaps", "imap.gmail.com", 993, label, "sch.dicis@gmail.com", "10071994JnOp_Chicken");
             Properties props;
             try {
@@ -337,73 +337,50 @@ class Nap
             } catch (MessagingException ex) {
                 folder.open(Folder.READ_WRITE);
             }
-
-            //Message[] messagesX = folder.search(new FlagTerm(new Flags(Flags.Flag.RECENT), false));
-            Message[] messagesX = folder.getMessages();
-
-            for(Message msg: messagesX) {
-                int i;
-                dateMessage.add(msg.getSentDate());
-                subjectMessage.add(msg.getSubject());
-                fromMessage.add(Arrays.toString(msg.getFrom()));
+            for(int i = folder.getMessageCount(); i>=0; i--) {
+                String xmlX = "";
+                Message msg = folder.getMessage(i);
                 Multipart multipart = (Multipart) msg.getContent();
-                for(i = 0; i<multipart.getCount(); i++){
-                    BodyPart bodyPart = multipart.getBodyPart(i);
+                for(int j = 0; j<multipart.getCount(); j++) {
+                    BodyPart bodyPart = multipart.getBodyPart(j);
                     if(!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition()) && StringUtils.isBlank(bodyPart.getFileName())) {
                         continue; // dealing with attachments only
                     }
-                    Convert(bodyPart.getInputStream());
+                    xmlX = IOUtils.toString(bodyPart.getInputStream(), "UTF-8");
                     break;
                 }
-                if(i == multipart.getCount()) {
-                    subjectMessage.remove(subjectMessage.size());
-                    fromMessage.remove(fromMessage.size());
-                    dateMessage.remove(dateMessage.size());
+                if(xmlX.contains("<?xml")) {
+                    xmlHorario = xmlX;
+                    if(!CreateXMLDoc()) xmlHorario = "";
+                    break;
                 }
             }
-            if(subjectMessage.size() == fromMessage.size()) {
-                messageCount = subjectMessage.size();
-            }
-            else messageCount = contentMessage.size();
             folder.close(false);
             store.close();
         }
 
 
-        private void Convert(InputStream inputStream) throws IOException {
-            StringBuilder stringBuilder = new StringBuilder();
-            String line;
-            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, String.valueOf(StandardCharsets.UTF_8)))) {
-                while ((line = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(line);
-                }
-            }
-            contentMessage.add(stringBuilder);
-        }
-
-        String CreateXMLDoc() {
-            if(messageCount == 0) return "";
-            int indexRecent = 0;
-            if(messageCount > 1) {
-                for (int i = 1; i < messageCount; i++) {
-                    if (dateMessage.get(indexRecent).compareTo(dateMessage.get(i)) < 0) indexRecent = i;
-                }
-            }
-            try {
-                doc = ConvertStringToXMLDocument(contentMessage.get(indexRecent).toString());
-                doc.getDocumentElement().normalize();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return contentMessage.get(indexRecent).toString();
-        }
-
-        private Document ConvertStringToXMLDocument(String xmlS)throws Exception {
-            //Parseador que produce el objeto DOM del contenido XML
+        boolean CreateXMLDoc() {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            //API para obtener la instancia DOM Document
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            return builder.parse(new InputSource(new StringReader(xmlS)));
+            DocumentBuilder builder = null;
+            try {
+                builder = factory.newDocumentBuilder();
+                doc = builder.parse(new InputSource(new StringReader(xmlHorario)));
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
+                return false;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            } catch (SAXException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
+
+        String GetXML() {
+            return xmlHorario;
         }
 
         Document GetDocument() {

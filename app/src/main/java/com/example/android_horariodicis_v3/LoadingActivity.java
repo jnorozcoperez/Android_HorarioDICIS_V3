@@ -41,16 +41,15 @@ public class LoadingActivity extends AppCompatActivity {
             try {
                 //_______________ Leer correo electrónico de una carrera en específica
                 mailService = new Nap.MailService(Nap.Carrera.Check(carrera));
-                String xml = mailService.CreateXMLDoc();
-                if (dbHandler != null && xml != null) {
+                String xml = mailService.GetXML();
+                if (dbHandler != null && xml != null && !xml.equals("")) {
                     Nap.FileX.Save(xml, getFilesDir() + "/SCHDATA/xmlDICIS.xml");
                     if(!firstTime) dbHandler.onUpgrade(dbHandler.getWritableDatabase(), 1, 2);
                     dbHandler.addItems(mailService.GetDocument(), carrera);
+                    setResult(Activity.RESULT_OK);
                 }
             } catch (Exception e) {
                 setResult(Activity.RESULT_CANCELED);
-            }finally {
-                setResult(Activity.RESULT_OK);
             }
             finish();
             return null;

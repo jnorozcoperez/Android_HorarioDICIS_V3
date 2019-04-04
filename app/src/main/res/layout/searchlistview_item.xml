@@ -75,7 +75,6 @@
         android:id="@+id/stbxGrupo"
         android:layout_width="40dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:gravity="center_vertical|center_horizontal|center"
         android:textAlignment="center"
         android:textColor="@color/colorPrimaryDark"
@@ -83,10 +82,9 @@
 
     <TextView
         android:id="@+id/stbxProfesor"
-        android:layout_width="113dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="5dp"
-        android:layout_weight="1"
         android:gravity="center_vertical|clip_vertical"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="12sp" />

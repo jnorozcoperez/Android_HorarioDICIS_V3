@@ -48,7 +48,8 @@
             <TextView
                 android:id="@+id/tbxClave"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="end"
                 android:textAlignment="textEnd"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="11sp"
@@ -133,6 +134,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite"
+        android:foregroundGravity="center_vertical"
         android:gravity="center_vertical"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="12sp" />
