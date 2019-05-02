@@ -90,9 +90,9 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        File folder = new File(getFilesDir() + "/SCHDATA");
+        boolean isFirst = !folder.exists();
         if(requestCode == 1) {
-            File folder = new File(getFilesDir() + "/SCHDATA");
-            boolean isFirst = folder.exists();
             if (resultCode == Activity.RESULT_OK) {
                 //_______________ Crear folder para almacenar archivos permanentes
                 isFirst = folder.mkdir();
@@ -112,6 +112,13 @@ public class MainActivity extends AppCompatActivity {
         }
         if (requestCode == 2) {
             if(resultCode == Activity.RESULT_CANCELED) {
+                if(isFirst) {
+                    if (folder.isDirectory()) {
+                        String[] children = folder.list();
+                        for (String aChildren : children) new File(folder, aChildren).delete();
+                    }
+                    folder.delete();
+                }
                 Toast errorToast = Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_no_internet), Toast.LENGTH_LONG);
                 errorToast.show();
             }

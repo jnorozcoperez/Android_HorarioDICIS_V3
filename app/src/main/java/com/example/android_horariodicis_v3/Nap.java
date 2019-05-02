@@ -38,6 +38,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -66,6 +67,7 @@ import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.URLName;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.search.FlagTerm;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -319,7 +321,7 @@ class Nap
         private String xmlHorario;
         private Document doc = null;
 
-        MailService(String label) throws Exception {
+        MailService(String label, String path) throws Exception {
             xmlHorario = "";
             URLName url = new URLName("imaps", "imap.gmail.com", 993, label, "sch.dicis@gmail.com", "10071994JnOp_Chicken");
             Properties props;
@@ -343,16 +345,25 @@ class Nap
                 Multipart multipart = (Multipart) msg.getContent();
                 for(int j = 0; j<multipart.getCount(); j++) {
                     BodyPart bodyPart = multipart.getBodyPart(j);
+                    Part part = multipart.getBodyPart(j);
                     if(!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition()) && StringUtils.isBlank(bodyPart.getFileName())) {
                         continue; // dealing with attachments only
                     }
-                    xmlX = IOUtils.toString(bodyPart.getInputStream(), "UTF-8");
-                    break;
-                }
-                if(xmlX.contains("<?xml")) {
-                    xmlHorario = xmlX;
-                    if(!CreateXMLDoc()) xmlHorario = "";
-                    break;
+                    String filename = bodyPart.getFileName();
+                    if(filename.contains("xml")) {
+                        xmlX = IOUtils.toString(bodyPart.getInputStream(), "UTF-8");
+                        if (xmlX.contains("<?xml")) {
+                            xmlHorario = xmlX;
+                            if (!CreateXMLDoc()) xmlHorario = "";
+                        }
+                    }
+                    else if(filename.contains("pdf")) {
+                        File fileToSave = new File(path, filename);
+                        fileToSave.delete();
+                        MimeBodyPart mimeBodyPart = (MimeBodyPart) part;
+                        mimeBodyPart.saveFile(fileToSave);
+                        i = 0;
+                    }
                 }
             }
             folder.close(false);
@@ -724,6 +735,25 @@ class Nap
     }
 
     static class FileX {
+
+        static boolean Copy(File input, File destination) {
+            try (InputStream in = new FileInputStream(input)) {
+                try(OutputStream out = new FileOutputStream(destination)) {
+                    byte[] buf = new byte[1024];
+                    int len;
+                    while((len = in.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return false;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
 
         static String GetBaseFileName(String fullfilename) {
             String filename = "";

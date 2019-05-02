@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -36,6 +37,8 @@ public class HorarioActivity extends AppCompatActivity {
     String carrera;
     String html;
     Horario db;
+    ProgressBar pbWait;
+    ListView lvitemX;
 
     private String convertStreamToString(InputStream is) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -95,12 +98,15 @@ public class HorarioActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.hide();
+        //_______________ Progress Bar
+        pbWait = findViewById(R.id.pbWait);
+        pbWait.setVisibility(View.INVISIBLE);
         //_______________ Crear base de datos
         db = new Horario(this);
         //_______________ Obtener carrera
         carrera = Nap.FileX.Read(getFilesDir() + "/SCHDATA", "Carrera.txt");
         //_______________ Crear listView
-        ListView lvitemX = findViewById(R.id.listViewCursos);
+        lvitemX = findViewById(R.id.listViewCursos);
         //_______________ Crear objeto listView personalizada para los cursos
         Nap.ListView.Cursos lvCursoX = new Nap.ListView.Cursos(this, GetArrayItems());
         //_______________ Vaciar todos los datos de los cursos a la listView
@@ -118,6 +124,7 @@ public class HorarioActivity extends AppCompatActivity {
         btPDF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
+                pbWait.setVisibility(View.VISIBLE);
                 String xslt = convertStreamToString(getResources().openRawResource(R.raw.xsltdicisv));
                 try {
                     Nap.FileX.Save(xslt, getFilesDir() + "/SCHDATA/xsltDICIS.xslt");
@@ -143,6 +150,7 @@ public class HorarioActivity extends AppCompatActivity {
         btShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                pbWait.setVisibility(View.VISIBLE);
                 String xslt = convertStreamToString(getResources().openRawResource(R.raw.xsltdicisv));
                 try {
                     Nap.FileX.Save(xslt, getFilesDir() + "/SCHDATA/xsltDICIS.xslt");
@@ -192,8 +200,11 @@ public class HorarioActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             String filename = Nap.FileX.RenameIfExist(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + filePDFName + "_" + Nap.Carrera.Check(carrera) + ".pdf", 0);
-            if(Nap.PDF.Create.FromHTML(filename, html)) {
+            File input = new File(getFilesDir() + "/SCHDATA", "pdf.pdf");
+            File output = new File(filename);
+            if(Nap.FileX.Copy(input, output)) {
                 Intent chooser = Nap.Notification.Show_ClickFile(getApplication(), filename, getResources().getString(R.string.app_name), Nap.FileX.GetBaseFileName(filename));
+                pbWait.setVisibility(View.INVISIBLE);
                 startActivity(chooser);
             }
             return null;
@@ -205,10 +216,11 @@ public class HorarioActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             String filename = getFilesDir() + File.separator + "SCHDATA" + File.separator + "SharePDF.pdf";
-            File fileX = new File(filename);
-            if(fileX.exists()) fileX.delete();
-            if(Nap.PDF.Create.FromHTML(filename, html)) {
+            File input = new File(getFilesDir() + "/SCHDATA", "pdf.pdf");
+            File output = new File(filename);
+            if(Nap.FileX.Copy(input, output)) {
                 Intent chooser = Nap.Share.File(getApplication(), filename);
+                pbWait.setVisibility(View.INVISIBLE);
                 startActivity(chooser);
             }
             return null;

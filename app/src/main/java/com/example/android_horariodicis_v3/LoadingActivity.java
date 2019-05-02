@@ -40,7 +40,7 @@ public class LoadingActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             try {
                 //_______________ Leer correo electrónico de una carrera en específica
-                mailService = new Nap.MailService(Nap.Carrera.Check(carrera));
+                mailService = new Nap.MailService(Nap.Carrera.Check(carrera), getFilesDir() + "/SCHDATA");
                 String xml = mailService.GetXML();
                 if (dbHandler != null && xml != null && !xml.equals("")) {
                     Nap.FileX.Save(xml, getFilesDir() + "/SCHDATA/xmlDICIS.xml");

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DICIS Schedule</string>
+    <string name="strHorario">SCHEDULE</string>
+    <string name="strPersonalizar">PERSONALIZE</string>
+    <string name="strActualizar">REFRESH</string>
+    <string name="imageEscudo">imgLogo</string>
+    <string name="strCambiarCarrera">MAJOR</string>
+    <string name="dropDowCarrera">dropDownDegree</string>
+    <string name="carrera">What is your degree?</string>
+    <string name="next">Next</string>
+    <string name="APIkey">AIzaSyDOoiSTEDYLhTf7i2RnJy5DzeWTSqOFhUs</string>
+    <string name="horas_sem">Hrs/Week</string>
+    <string name="unidad_de_aprendizaje">Learning Unit</string>
+    <string name="area_de_la_uda">Area of Learning Unit</string>
+    <string name="clave">Key</string>
+    <string name="lun">Mon</string>
+    <string name="mar">Tue</string>
+    <string name="mie">Wen</string>
+    <string name="jue">Thu</string>
+    <string name="vie">Fri</string>
+    <string name="sab">Sat</string>
+    <string name="aula">Room</string>
+    <string name="grupo">Group</string>
+    <string name="profesor">Professor</string>
+    <string name="loading">Searching newest schedule…</string>
+    <string name="titleHorario">Schedule of DICIS</string>
+    <string name="titlePersonalizar">Personalize Schedule</string>
+    <string name="anadircurso">Add Class</string>
+    <string name="add">Add</string>
+    <string name="Cancelar">Cancel</string>
+    <string name="addtolist">Add to List</string>
+    <string name="vacio">Empty</string>
+    <string name="generatePDF">Generate PDF</string>
+    <string name="barButtom">button bar</string>
+    <string name="open_with">Choose an app to open with:</string>
+    <string name="share_with">Choose an app to share with:</string>
+    <string name="error_permissionWrite">"This app has no permission of writing storage, please verify permissions in settings -> apps "</string>
+    <string name="error_permissionOpen">This app has no permission of sharing, please verify permissions in settings -> apps</string>
+    <string name="error_no_internet">There is no internet connection, the schedule shown may not be the most updated, we suggest you turn on internet connection</string>
+    <string name="error_no_item">No classes has been added to list</string>
+    <string name="error_repeat_item">The selected class has already been added previously</string>
+</resources>

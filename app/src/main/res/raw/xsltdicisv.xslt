@@ -2,49 +2,37 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:template match="/">
 <html>
-	<style>
-	.tableX tr:nth-child(even){
-		background-color: #FFF4CD;
-	}
-	</style>
 	<body>
+		<h1 style="text-align:center; font-family: arial;">DIVISIÓN DE INGENIERÍA CAMPUS IRAPUATO-SALAMANCA <xsl:value-of select="list/Carrera"/> SEDE: SALAMANCA</h1>
 		<table border='0' style='width:100%; font-family: arial; border-collapse: collapse;' class='tableX'>
-		<tr style='color: #FFFFFF; background-color: #FFD200;'>
-			<th style='padding: 8px; border: 1px solid #FFCA08; text-align:left; min-width: 50px;'>Clave</th>
-			<th style='padding: 8px; border: 1px solid #FFCA08; text-align:left; min-width: 80px;'>Area de la UDA</th>
-			<th style='padding: 8px; border: 1px solid #FFCA08; text-align:left; min-width: 120px;'>Unidad De Aprendizaje</th>
-			<th style='padding: 8px; border: 1px solid #FFCA08; text-align:left; min-width: 40px;'>Horas / Sem</th>
-			<th style='padding: 8px; border: 1px solid #FFCA08; text-align:left; min-width: 100px;'>Requisitos</th>
-			<th style='padding: 8px; border: 1px solid #FFCA08; text-align:left; min-width: 40px;'>Grupo</th>
-			<th style='padding: 8px; border: 1px solid #FFCA08; text-align:left; min-width: 90px;'>Lun</th>
-			<th style='padding: 8px; border: 1px solid #FFCA08; text-align:left; min-width: 90px;'>Mar</th>
-			<th style='padding: 8px; border: 1px solid #FFCA08; text-align:left; min-width: 90px;'>Mie</th>
-			<th style='padding: 8px; border: 1px solid #FFCA08; text-align:left; min-width: 90px;'>Jue</th>
-			<th style='padding: 8px; border: 1px solid #FFCA08; text-align:left; min-width: 90px;'>Vie</th>
-			<th style='padding: 8px; border: 1px solid #FFCA08; text-align:left; min-width: 90px;'>Sab</th>
-			<th style='padding: 8px; border: 1px solid #FFCA08; text-align:left; min-width: 50px;'>Aula</th>
-			<th style='padding: 8px; border: 1px solid #FFCA08; text-align:left; min-width: 120px;'>Profesor</th>
-			<th style='padding: 8px; border: 1px solid #FFCA08; text-align:left; min-width: 120px;'>Presidente</th>
-			<th style='padding: 8px; border: 1px solid #FFCA08; text-align:left; min-width: 120px;'>Vocal</th>
-		</tr>
+			<tr style='color: #000000;'>
+				<th style='background-color: #FFFF00; padding: 8px; border: 1px solid #000000; text-align:left; min-width: 60px;'>Clave</th>
+				<th style='background-color: #FFFF00; padding: 8px; border: 1px solid #000000; text-align:left; min-width: 120px;'>Unidad De Aprendizaje</th>
+				<th style='background-color: #FFFF00; padding: 8px; border: 1px solid #000000; text-align:left; min-width: 60px;'>Hrs / Sem</th>
+				<th style='background-color: #FFFF00; padding: 8px; border: 1px solid #000000; text-align:left; min-width: 40px;'>Grupo</th>
+				<th style='background-color: #00FF00; padding: 8px; border: 1px solid #000000; text-align:center; min-width: 60px;'>Lun</th>
+				<th style='background-color: #00FF00; padding: 8px; border: 1px solid #000000; text-align:center; min-width: 60px;'>Mar</th>
+				<th style='background-color: #00FF00; padding: 8px; border: 1px solid #000000; text-align:center; min-width: 60px;'>Mie</th>
+				<th style='background-color: #00FF00; padding: 8px; border: 1px solid #000000; text-align:center; min-width: 60px;'>Jue</th>
+				<th style='background-color: #00FF00; padding: 8px; border: 1px solid #000000; text-align:center; min-width: 60px;'>Vie</th>
+				<th style='background-color: #00FF00; padding: 8px; border: 1px solid #000000; text-align:center; min-width: 60px;'>Sab</th>
+				<th style='background-color: #00FF00; padding: 8px; border: 1px solid #000000; text-align:center; min-width: 60px;'>Aula</th>
+				<th style='background-color: #00FF00; padding: 8px; border: 1px solid #000000; text-align:left; min-width: 120px;'>Profesor</th>
+			</tr>
 		<xsl:for-each select="list/item">
 		<tr>
-			<td style='border: 1px solid #FFCA08; text-align: left; padding: 8px;'><xsl:value-of select="Clave"/></td>
-			<td style='border: 1px solid #FFCA08; text-align: left; padding: 8px;'><xsl:value-of select="AreaDeLaUda"/></td>
-			<td style='border: 1px solid #FFCA08; text-align: left; padding: 8px;'><xsl:value-of select="UnidadDeAprendizaje"/></td>
-			<td style='border: 1px solid #FFCA08; text-align: left; padding: 8px;'><xsl:value-of select="HorasSem"/></td>
-			<td style='border: 1px solid #FFCA08; text-align: left; padding: 8px;'><xsl:value-of select="Requisitos"/></td>
-			<td style='border: 1px solid #FFCA08; text-align: left; padding: 8px;'><xsl:value-of select="Grupo"/></td>
-			<td style='border: 1px solid #FFCA08; text-align: left; padding: 8px;'><xsl:value-of select="Lun"/></td>
-			<td style='border: 1px solid #FFCA08; text-align: left; padding: 8px;'><xsl:value-of select="Mar"/></td>
-			<td style='border: 1px solid #FFCA08; text-align: left; padding: 8px;'><xsl:value-of select="Mie"/></td>
-			<td style='border: 1px solid #FFCA08; text-align: left; padding: 8px;'><xsl:value-of select="Jue"/></td>
-			<td style='border: 1px solid #FFCA08; text-align: left; padding: 8px;'><xsl:value-of select="Vie"/></td>
-			<td style='border: 1px solid #FFCA08; text-align: left; padding: 8px;'><xsl:value-of select="Sab"/></td>
-			<td style='border: 1px solid #FFCA08; text-align: left; padding: 8px;'><xsl:value-of select="Aula"/></td>
-			<td style='border: 1px solid #FFCA08; text-align: left; padding: 8px;'><xsl:value-of select="Profesor"/></td>
-			<td style='border: 1px solid #FFCA08; text-align: left; padding: 8px;'><xsl:value-of select="Presidente"/></td>
-			<td style='border: 1px solid #FFCA08; text-align: left; padding: 8px;'><xsl:value-of select="Vocal"/></td>
+			<td style='background-color: #F5F5F5; border: 1px solid #000000; text-align: left; padding: 8px;'><xsl:value-of select="Clave"/></td>
+			<td style='background-color: #F5F5F5; border: 1px solid #000000; text-align: left; padding: 8px;'><xsl:value-of select="UnidadDeAprendizaje"/></td>
+			<td style='background-color: #F5F5F5; border: 1px solid #000000; text-align: left; padding: 8px;'><xsl:value-of select="HorasSem"/></td>
+			<td style='background-color: #F5F5F5; border: 1px solid #000000; text-align: left; padding: 8px;'><xsl:value-of select="Grupo"/></td>
+			<td style='background-color: #F5F5F5; border: 1px solid #000000; text-align: center; padding: 8px;'><xsl:value-of select="Lun"/></td>
+			<td style='background-color: #F5F5F5; border: 1px solid #000000; text-align: center; padding: 8px;'><xsl:value-of select="Mar"/></td>
+			<td style='background-color: #F5F5F5; border: 1px solid #000000; text-align: center; padding: 8px;'><xsl:value-of select="Mie"/></td>
+			<td style='background-color: #F5F5F5; border: 1px solid #000000; text-align: center; padding: 8px;'><xsl:value-of select="Jue"/></td>
+			<td style='background-color: #F5F5F5; border: 1px solid #000000; text-align: center; padding: 8px;'><xsl:value-of select="Vie"/></td>
+			<td style='background-color: #F5F5F5; border: 1px solid #000000; text-align: center; padding: 8px;'><xsl:value-of select="Sab"/></td>
+			<td style='background-color: #F5F5F5; border: 1px solid #000000; text-align: center; padding: 8px;'><xsl:value-of select="Aula"/></td>
+			<td style='background-color: #F5F5F5; border: 1px solid #000000; text-align: left; padding: 8px;'><xsl:value-of select="Profesor"/></td>
 		</tr>
 		</xsl:for-each>
 	  </table>

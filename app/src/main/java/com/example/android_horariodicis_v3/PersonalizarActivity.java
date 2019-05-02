@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +40,7 @@ public class PersonalizarActivity extends AppCompatActivity {
     Button btPDF;
     String html;
     Horario db;
-
+    ProgressBar pbWait;
 
     private String convertStreamToString(InputStream is) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -79,6 +80,9 @@ public class PersonalizarActivity extends AppCompatActivity {
         setContentView(R.layout.activity_personalizar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) { actionBar.hide(); }
+        //_______________ Progress Bar
+        pbWait = findViewById(R.id.pbPWait);
+        pbWait.setVisibility(View.INVISIBLE);
         //_______________ Crear base de datos
         db = new Horario(this);
         //_______________ Botón para regresar
@@ -103,6 +107,7 @@ public class PersonalizarActivity extends AppCompatActivity {
         btPDF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                pbWait.setVisibility(View.VISIBLE);
                 if(idList.size() == 0) {
                     Toast errorToast = Toast.makeText(PersonalizarActivity.this, getResources().getString(R.string.error_no_item), Toast.LENGTH_LONG);
                     errorToast.show();
@@ -163,6 +168,7 @@ public class PersonalizarActivity extends AppCompatActivity {
             String filename = Nap.FileX.RenameIfExist(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + filePDFName + "_" + Nap.Carrera.Check(carrera) + ".pdf", 0);
             if(Nap.PDF.Create.FromHTML(filename, html)) {
                 Intent chooser = Nap.Notification.Show_ClickFile(getApplicationContext(), filename, getResources().getString(R.string.app_name), Nap.FileX.GetBaseFileName(filename));
+                pbWait.setVisibility(View.INVISIBLE);
                 startActivity(chooser);
             }
             return null;
